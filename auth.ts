@@ -48,6 +48,4 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     pages: {
         signIn: "/", // Custom sign-in page is the home page
     },
-    // Hardcoding secret for local dev to bypass .env read issues
-    secret: "7f8b3c2d1e9f4a5b6c7d8e9f0a1b2c3d",
 })

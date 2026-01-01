@@ -1,13 +1,14 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { db } from "@/lib/db"; // Use global DB
 import { auth } from "@/auth";
 
-const prisma = new PrismaClient();
+export const dynamic = "force-dynamic";
 
 export async function DELETE(
     req: Request,
-    { params }: { params: Promise<{ messageId: string }> }
+    props: { params: Promise<{ messageId: string }> }
 ) {
+    const params = await props.params;
     try {
         console.log("DELETE request received");
         const session = await auth();
@@ -16,15 +17,11 @@ export async function DELETE(
             return new NextResponse("Unauthorized", { status: 401 });
         }
 
-        console.log("Prisma Keys:", Object.keys(prisma));
-        // @ts-ignore
-        console.log("Prisma Message Model:", prisma.message);
-
-        const { messageId } = await params;
+        const { messageId } = params;
 
         // Verify ownership
         // @ts-ignore
-        const message = await prisma.message.findUnique({
+        const message = await db.message.findUnique({
             where: { id: messageId },
             include: { sender: true }
         });
@@ -37,15 +34,10 @@ export async function DELETE(
 
         if (message.sender.email !== session.user.email) {
             console.log("Ownership mismatch...");
-            if (process.env.NODE_ENV === "development") {
-                console.log("DEV MODE: Allowing deletion despite mismatch.");
-            } else {
-                console.log("Forbidden.");
-                return new NextResponse("Forbidden", { status: 403 });
-            }
+            return new NextResponse("Forbidden", { status: 403 });
         }
 
-        await prisma.message.delete({
+        await db.message.delete({
             where: { id: messageId },
         });
 
