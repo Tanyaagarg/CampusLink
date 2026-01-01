@@ -1,0 +1,204 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  hostel        String?
+  branch        String?
+  year          String?
+  role          String    @default("STUDENT")
+  
+  subscriptionStatus String   @default("FREE_TRIAL")
+  subscriptionStart  DateTime @default(now())
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  lastSeen      DateTime  @default(now())
+  
+  banner        String?
+  bio           String?
+  github        String?
+  linkedin      String?
+  instagram     String?
+  phone         String?
+
+  // Relations
+  listings      MarketplaceListing[]
+  rides         Ride[]
+  teamPosts     TeamPost[]
+  tutorProfile  TutorProfile?
+  ventures      Venture[]
+  conversations Conversation[] @relation("UserConversations")
+  messages      Message[]
+  teamRequests  TeamRequest[]
+  rideRequests  RideRequest[]
+  tutorRequests TutorRequest[]
+}
+
+model MarketplaceListing {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  price       Float
+  condition   String
+  category    String
+  images      String[] // Array of image URLs
+  status      String   @default("AVAILABLE") // AVAILABLE, SOLD
+  
+  sellerId    String
+  seller      User     @relation(fields: [sellerId], references: [id])
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Ride {
+  id          String   @id @default(cuid())
+  from        String
+  to          String
+  date        DateTime
+  time        String
+  vehicle     String
+  type        String   // Car, Bike
+  seats       Int
+  price       Float
+  description String?
+  status      String   @default("ACTIVE") // ACTIVE, FULL, COMPLETED
+  
+  hostId      String
+  host        User     @relation(fields: [hostId], references: [id])
+  
+  requests    RideRequest[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model RideRequest {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  rideId    String
+  ride      Ride     @relation(fields: [rideId], references: [id], onDelete: Cascade)
+  status    String   @default("PENDING") // PENDING, ACCEPTED, REJECTED
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, rideId])
+}
+
+model TeamPost {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  type        String   // Hackathon, Project, Research, Startup
+  lookingFor  String   // Frontend, Backend, etc.
+  tags        String[]
+  status      String   @default("OPEN") // OPEN, CLOSED
+  
+  authorId    String
+  author      User     @relation(fields: [authorId], references: [id])
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  requests    TeamRequest[]
+}
+
+model TeamRequest {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  postId    String
+  post      TeamPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  status    String   @default("PENDING") // PENDING, ACCEPTED, REJECTED
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, postId])
+}
+
+model TutorProfile {
+  id          String   @id @default(cuid())
+  subjects    String[]
+  bio         String?
+  hourlyRate  Float
+  availability String?
+  
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id])
+  
+  requests    TutorRequest[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model TutorRequest {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  tutorProfileId String
+  tutorProfile   TutorProfile @relation(fields: [tutorProfileId], references: [id], onDelete: Cascade)
+  status    String   @default("PENDING") // PENDING, ACCEPTED, REJECTED
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, tutorProfileId])
+}
+
+model Venture {
+  id          String   @id @default(cuid())
+  name        String
+  description String
+  category    String   // Food, Service, Product
+  logo        String?
+  contact     String?
+  status      String   @default("Open") // Open, Closed
+  timing      String?
+  hostel      String?
+  catalog     Json?
+  
+  ownerId     String
+  owner       User     @relation(fields: [ownerId], references: [id])
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Conversation {
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  
+  users     User[]    @relation("UserConversations") // Implicit many-to-many
+  messages  Message[]
+}
+
+model Message {
+  id             String       @id @default(cuid())
+  text           String
+  senderId       String
+  sender         User         @relation(fields: [senderId], references: [id])
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  
+  read           Boolean      @default(false)
+  createdAt      DateTime     @default(now())
+
+  type           String       @default("text") // text, image, audio, file
+  attachment     String?      // URL or Base64
+}
