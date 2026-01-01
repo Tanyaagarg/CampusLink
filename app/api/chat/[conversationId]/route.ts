@@ -2,16 +2,15 @@ import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(req: Request, props: { params: Promise<{ conversationId: string }> }) {
     const params = await props.params;
     try {
         const session = await auth();
         let userId = session?.user?.email ? (await db.user.findUnique({ where: { email: session.user.email } }))?.id : null;
 
-        if (!userId && process.env.NODE_ENV === "development") {
-            const devUser = await db.user.findUnique({ where: { email: "dev@campuslink.com" } });
-            userId = devUser?.id;
-        }
+
 
         if (!userId) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -57,10 +56,7 @@ export async function POST(req: Request, props: { params: Promise<{ conversation
         const session = await auth();
         let userId = session?.user?.email ? (await db.user.findUnique({ where: { email: session.user.email } }))?.id : null;
 
-        if (!userId && process.env.NODE_ENV === "development") {
-            const devUser = await db.user.findUnique({ where: { email: "dev@campuslink.com" } });
-            userId = devUser?.id;
-        }
+
 
         if (!userId) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -103,10 +99,7 @@ export async function DELETE(req: Request, props: { params: Promise<{ conversati
         const session = await auth();
         let userId = session?.user?.email ? (await db.user.findUnique({ where: { email: session.user.email } }))?.id : null;
 
-        if (!userId && process.env.NODE_ENV === "development") {
-            const devUser = await db.user.findUnique({ where: { email: "dev@campuslink.com" } });
-            userId = devUser?.id;
-        }
+
 
         if (!userId) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -123,11 +116,7 @@ export async function DELETE(req: Request, props: { params: Promise<{ conversati
 
         const isParticipant = conversation.users.some((u: any) => u.id === userId);
         if (!isParticipant) {
-            if (process.env.NODE_ENV === "development") {
-                console.log("DEV MODE: Allowing chat delete despite not being participant.");
-            } else {
-                return new NextResponse("Forbidden", { status: 403 });
-            }
+            return new NextResponse("Forbidden", { status: 403 });
         }
 
         await db.conversation.delete({
