@@ -4,9 +4,10 @@ import { db } from "@/lib/db";
 
 export async function PATCH(
     req: Request,
-    { params }: { params: { notificationId: string } }
+    { params }: { params: Promise<{ notificationId: string }> }
 ) {
     try {
+        const { notificationId } = await params;
         const session = await auth();
         let userId = session?.user?.email ? (await db.user.findUnique({ where: { email: session.user.email } }))?.id : null;
 
@@ -22,7 +23,7 @@ export async function PATCH(
         // Just update read status
         const notification = await db.notification.update({
             where: {
-                id: params.notificationId,
+                id: notificationId,
                 userId, // Ensure ownership
             },
             data: {
@@ -40,9 +41,10 @@ export async function PATCH(
 
 export async function DELETE(
     req: Request,
-    { params }: { params: { notificationId: string } }
+    { params }: { params: Promise<{ notificationId: string }> }
 ) {
     try {
+        const { notificationId } = await params;
         const session = await auth();
         let userId = session?.user?.email ? (await db.user.findUnique({ where: { email: session.user.email } }))?.id : null;
 
@@ -57,7 +59,7 @@ export async function DELETE(
 
         await db.notification.delete({
             where: {
-                id: params.notificationId,
+                id: notificationId,
                 userId, // Ensure ownership
             },
         });
