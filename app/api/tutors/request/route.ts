@@ -45,6 +45,24 @@ export async function POST(req: Request) {
             }
         });
 
+        // Create Notification for Tutor
+        const tutorProfile = await db.tutorProfile.findUnique({
+            where: { id: tutorProfileId },
+            select: { userId: true, subjects: true }
+        });
+
+        if (tutorProfile && tutorProfile.userId !== userId) {
+            await db.notification.create({
+                data: {
+                    userId: tutorProfile.userId,
+                    type: "TUTOR_REQUEST",
+                    title: "New Tutor Request",
+                    message: `Someone requested a tutor session for ${tutorProfile.subjects.join(", ")}`,
+                    metadata: { tutorProfileId, requestId: request.id }
+                }
+            });
+        }
+
         return NextResponse.json(request);
 
     } catch (error) {

@@ -16,11 +16,11 @@ export async function GET(req: Request) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        // Update user heartbeat - COMMENTED OUT UNTIL SERVER RESTART
-        // await db.user.update({
-        //     where: { id: userId },
-        //     data: { lastSeen: new Date() }
-        // });
+        // Update user heartbeat
+        await db.user.update({
+            where: { id: userId },
+            data: { lastSeen: new Date() }
+        });
 
         const conversations = await db.conversation.findMany({
             where: {
@@ -31,7 +31,7 @@ export async function GET(req: Request) {
             include: {
                 users: {
                     where: { id: { not: userId } },
-                    select: { id: true, name: true, image: true, email: true } // Removed lastSeen temporarily
+                    select: { id: true, name: true, image: true, email: true, lastSeen: true }
                 },
                 messages: {
                     orderBy: { createdAt: 'desc' },
@@ -107,7 +107,7 @@ export async function POST(req: Request) {
             },
             include: {
                 users: {
-                    select: { id: true, name: true, image: true, email: true } // Removed lastSeen
+                    select: { id: true, name: true, image: true, email: true, lastSeen: true }
                 },
                 messages: {
                     orderBy: { createdAt: 'desc' },
@@ -131,7 +131,7 @@ export async function POST(req: Request) {
             },
             include: {
                 users: {
-                    select: { id: true, name: true, image: true, email: true } // Removed lastSeen
+                    select: { id: true, name: true, image: true, email: true, lastSeen: true }
                 }
             }
         });

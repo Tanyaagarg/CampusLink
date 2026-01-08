@@ -34,6 +34,8 @@ function RideSharingContent() {
 
     useEffect(() => {
         fetchRides();
+        const interval = setInterval(fetchRides, 5000);
+        return () => clearInterval(interval);
     }, [searchQuery]);
 
     const handleRequest = async (rideId: string, hasRequested: boolean) => {

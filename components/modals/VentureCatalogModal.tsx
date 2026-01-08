@@ -34,8 +34,8 @@ export default function VentureCatalogModal({ isOpen, onClose, venture }: Props)
                     <div>
                         <div className="flex items-center gap-2 mb-2">
                             <span className={`px-2 py-0.5 text-[10px] font-bold uppercase rounded-full border ${venture.status === "Open"
-                                    ? "bg-green-500/10 text-green-400 border-green-500/20"
-                                    : "bg-red-500/10 text-red-400 border-red-500/20"
+                                ? "bg-green-500/10 text-green-400 border-green-500/20"
+                                : "bg-red-500/10 text-red-400 border-red-500/20"
                                 }`}>
                                 {venture.status}
                             </span>
@@ -74,8 +74,15 @@ export default function VentureCatalogModal({ isOpen, onClose, venture }: Props)
                                                 key={iIndex}
                                                 className="flex justify-between items-center p-2 rounded-lg bg-[#181818] border border-[#333] hover:border-amber-500/30 transition-colors"
                                             >
-                                                <span className="text-sm text-gray-300">{item.name}</span>
-                                                <span className="text-sm font-bold text-white">{item.price}</span>
+                                                <div className="flex items-center gap-3">
+                                                    {item.image && (
+                                                        <div className="w-10 h-10 rounded-md overflow-hidden flex-shrink-0 bg-[#222]">
+                                                            <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                                                        </div>
+                                                    )}
+                                                    <span className="text-sm text-gray-300">{item.name}</span>
+                                                </div>
+                                                <span className="text-sm font-bold text-white max-w-[20%] text-right truncate pl-2">{item.price}</span>
                                             </motion.div>
                                         ))}
                                         {(!group.items || group.items.length === 0) && (

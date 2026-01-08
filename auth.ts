@@ -43,6 +43,32 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 console.error("Error creating user during signin:", error);
                 return false;
             }
+        },
+        async jwt({ token, user, trigger, session }) {
+            if (user) {
+                token.id = user.id;
+            }
+
+            // Should fetch fresh data from DB to ensure updates (like profile edits) are reflected
+            if (token.email) {
+                const dbUser = await db.user.findUnique({ where: { email: token.email } });
+                if (dbUser) {
+                    token.id = dbUser.id;
+                    token.branch = dbUser.branch;
+                    token.year = dbUser.year;
+                    token.hostel = dbUser.hostel;
+                }
+            }
+            return token;
+        },
+        async session({ session, token }) {
+            if (session.user && token) {
+                session.user.id = token.id as string;
+                session.user.branch = token.branch as string;
+                session.user.year = token.year as string;
+                session.user.hostel = token.hostel as string;
+            }
+            return session;
         }
     },
     pages: {

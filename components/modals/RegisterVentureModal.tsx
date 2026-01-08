@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Modal from "@/components/ui/Modal";
 import { Coffee, Clock, Phone, MapPin, Plus, Trash2, ChevronDown, ChevronRight } from "lucide-react";
+import { UploadButton } from "@/lib/uploadthing";
 
 interface Props {
     isOpen: boolean;
@@ -307,22 +308,55 @@ export default function RegisterVentureModal({ isOpen, onClose, onSuccess, ventu
 
                             <div className="space-y-2 pl-2 border-l border-[#222]">
                                 {group.items.map((item: any, iIndex: number) => (
-                                    <div key={iIndex} className="flex gap-2">
-                                        <input
-                                            type="text"
-                                            value={item.name}
-                                            onChange={(e) => updateItem(gIndex, iIndex, "name", e.target.value)}
-                                            className="flex-[2] bg-[#181818] rounded-lg px-2 py-1 text-xs text-white border border-[#333]"
-                                            placeholder="Item Name"
-                                        />
-                                        <input
-                                            type="text"
-                                            value={item.price}
-                                            onChange={(e) => updateItem(gIndex, iIndex, "price", e.target.value)}
-                                            className="flex-1 bg-[#181818] rounded-lg px-2 py-1 text-xs text-white border border-[#333]"
-                                            placeholder="Price (₹)"
-                                        />
-                                        <button onClick={() => deleteItem(gIndex, iIndex)} className="text-gray-600 hover:text-red-500">
+                                    <div key={iIndex} className="flex gap-2 items-start bg-[#181818] p-2 rounded-lg border border-[#333]">
+                                        {/* Image Upload for Item */}
+                                        <div className="relative w-10 h-10 flex-shrink-0 bg-[#222] rounded overflow-hidden group">
+                                            {item.image ? (
+                                                <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                                            ) : (
+                                                <div className="w-full h-full flex items-center justify-center text-[8px] text-gray-500 text-center leading-none">
+                                                    No Img
+                                                </div>
+                                            )}
+
+                                            {/* Hover Overlay for Upload */}
+                                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity cursor-pointer">
+                                                <UploadButton
+                                                    endpoint="imageUploader"
+                                                    onClientUploadComplete={(res) => {
+                                                        if (res && res[0]) {
+                                                            updateItem(gIndex, iIndex, "image", res[0].url);
+                                                        }
+                                                    }}
+                                                    onUploadError={(error: Error) => {
+                                                        alert(`ERROR! ${error.message}`);
+                                                    }}
+                                                    appearance={{
+                                                        button: "w-full h-full opacity-0 absolute inset-0 cursor-pointer", // Invisible clickable area
+                                                        allowedContent: "hidden"
+                                                    }}
+                                                />
+                                                <Plus className="w-4 h-4 text-white pointer-events-none" />
+                                            </div>
+                                        </div>
+
+                                        <div className="flex-1 flex gap-2">
+                                            <input
+                                                type="text"
+                                                value={item.name}
+                                                onChange={(e) => updateItem(gIndex, iIndex, "name", e.target.value)}
+                                                className="flex-[2] bg-transparent rounded px-1 py-1 text-xs text-white border-b border-[#333] focus:border-amber-500 focus:outline-none"
+                                                placeholder="Item Name"
+                                            />
+                                            <input
+                                                type="text"
+                                                value={item.price}
+                                                onChange={(e) => updateItem(gIndex, iIndex, "price", e.target.value)}
+                                                className="flex-1 bg-transparent rounded px-1 py-1 text-xs text-white border-b border-[#333] focus:border-amber-500 focus:outline-none"
+                                                placeholder="Amount"
+                                            />
+                                        </div>
+                                        <button onClick={() => deleteItem(gIndex, iIndex)} className="text-gray-600 hover:text-red-500 self-center">
                                             <Trash2 className="w-3 h-3" />
                                         </button>
                                     </div>

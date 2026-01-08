@@ -33,6 +33,24 @@ export async function POST(req: Request) {
             }
         });
 
+        // Create Notification for Post Owner
+        const post = await db.teamPost.findUnique({
+            where: { id: postId },
+            select: { authorId: true, title: true }
+        });
+
+        if (post && post.authorId !== userId) {
+            await db.notification.create({
+                data: {
+                    userId: post.authorId,
+                    type: "TEAM_REQUEST",
+                    title: "New Team Request",
+                    message: `Someone requested to join your team for "${post.title}"`,
+                    metadata: { postId, requestId: request.id }
+                }
+            });
+        }
+
         return NextResponse.json(request);
 
     } catch (error) {

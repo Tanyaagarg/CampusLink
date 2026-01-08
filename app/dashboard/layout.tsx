@@ -17,10 +17,11 @@ import {
     Search,
     Menu,
     X,
-    ArrowRight
+    ArrowRight,
+    MapPin
 } from "lucide-react";
 import { UserAvatar } from "@/components/UserAvatar";
-import { signOut } from "next-auth/react";
+import { signOut, useSession, SessionProvider } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import { NotificationProvider, useNotifications } from "@/components/providers/NotificationContext";
 
@@ -37,6 +38,7 @@ const sidebarItems = [
 ];
 
 function Sidebar() {
+    const { data: session } = useSession();
     const pathname = usePathname();
     const { unreadCount, chatUnreadCount } = useNotifications();
 
@@ -96,12 +98,18 @@ function Sidebar() {
             <div className="p-4 border-t border-[#222] space-y-4">
                 <div className="flex items-center gap-3 p-3 rounded-xl bg-[#111] border border-[#222]">
                     <UserAvatar
-                        name="Tanya Garg"
-                        className="w-8 h-8"
+                        name={session?.user?.name || "User"}
+                        src={session?.user?.image}
+                        className="w-10 h-10 border border-[#222]"
                     />
                     <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-white truncate">TANYA GARG</p>
-                        <p className="text-xs text-gray-500 truncate">tgarg_be23@thapar.edu</p>
+                        <p className="text-sm font-bold text-white truncate">{session?.user?.name || "User"}</p>
+                        <p className="text-[10px] text-gray-400 font-medium truncate">
+                            {session?.user?.branch || "Student"} '{session?.user?.year || ""}
+                        </p>
+                        <p className="text-[10px] text-gray-500 truncate flex items-center gap-1 mt-0.5">
+                            <MapPin className="w-3 h-3" /> {session?.user?.hostel || "Campus"}
+                        </p>
                     </div>
                 </div>
 
@@ -123,41 +131,43 @@ export default function DashboardLayout({
     children: React.ReactNode;
 }) {
     return (
-        <NotificationProvider>
-            <div className="flex h-screen bg-[#050505] text-gray-100 overflow-hidden font-outfit">
-                <Sidebar />
+        <SessionProvider>
+            <NotificationProvider>
+                <div className="flex h-screen bg-[#050505] text-gray-100 overflow-hidden font-outfit">
+                    <Sidebar />
 
-                {/* Main Content */}
-                <main className="flex-1 flex flex-col overflow-hidden relative">
-                    {/* Top Bar - Search */}
-                    <header className="h-16 border-b border-[#222] flex items-center px-8 bg-[#050505]/50 backdrop-blur-md sticky top-0 z-40">
-                        <div className="w-full max-w-2xl relative">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <svg className="h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                </svg>
-                            </div>
-                            <input
-                                type="text"
-                                onKeyDown={(e) => {
-                                    if (e.key === 'Enter') {
-                                        const query = (e.target as HTMLInputElement).value;
-                                        if (query.trim()) {
-                                            window.location.href = `/dashboard/search?q=${encodeURIComponent(query)}`;
+                    {/* Main Content */}
+                    <main className="flex-1 flex flex-col overflow-hidden relative">
+                        {/* Top Bar - Search */}
+                        <header className="h-16 border-b border-[#222] flex items-center px-8 bg-[#050505]/50 backdrop-blur-md sticky top-0 z-40">
+                            <div className="w-full max-w-2xl relative">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <svg className="h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                    </svg>
+                                </div>
+                                <input
+                                    type="text"
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            const query = (e.target as HTMLInputElement).value;
+                                            if (query.trim()) {
+                                                window.location.href = `/dashboard/search?q=${encodeURIComponent(query)}`;
+                                            }
                                         }
-                                    }
-                                }}
-                                className="block w-full pl-10 pr-3 py-2 border border-[#222] rounded-lg leading-5 bg-[#0a0a0a] text-gray-300 placeholder-gray-500 focus:outline-none focus:border-neon-blue/50 focus:ring-1 focus:ring-neon-blue/50 sm:text-sm transition-all shadow-inner"
-                                placeholder="Search everything... (Press Enter)"
-                            />
-                        </div>
-                    </header>
+                                    }}
+                                    className="block w-full pl-10 pr-3 py-2 border border-[#222] rounded-lg leading-5 bg-[#0a0a0a] text-gray-300 placeholder-gray-500 focus:outline-none focus:border-neon-blue/50 focus:ring-1 focus:ring-neon-blue/50 sm:text-sm transition-all shadow-inner"
+                                    placeholder="Search everything... (Press Enter)"
+                                />
+                            </div>
+                        </header>
 
-                    <div className="flex-1 overflow-y-auto p-8">
-                        {children}
-                    </div>
-                </main>
-            </div>
-        </NotificationProvider>
+                        <div className="flex-1 overflow-y-auto p-8">
+                            {children}
+                        </div>
+                    </main>
+                </div>
+            </NotificationProvider>
+        </SessionProvider>
     );
 }

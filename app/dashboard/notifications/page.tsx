@@ -8,7 +8,7 @@ import { UserAvatar } from "@/components/UserAvatar";
 
 export default function NotificationsPage() {
     const { notifications, unreadCount, markAsRead, deleteNotification } = useNotifications();
-    const [notificationToDelete, setNotificationToDelete] = useState<number | null>(null);
+    const [notificationToDelete, setNotificationToDelete] = useState<string | null>(null);
 
     // Grouping Logic
     const groupedNotifications = {

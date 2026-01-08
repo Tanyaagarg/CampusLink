@@ -45,6 +45,24 @@ export async function POST(req: Request) {
             }
         });
 
+        // Create Notification for Ride Host
+        const ride = await db.ride.findUnique({
+            where: { id: rideId },
+            select: { hostId: true, from: true, to: true }
+        });
+
+        if (ride && ride.hostId !== userId) {
+            await db.notification.create({
+                data: {
+                    userId: ride.hostId,
+                    type: "RIDE_REQUEST",
+                    title: "New Ride Request",
+                    message: `Someone requested to join your ride from ${ride.from} to ${ride.to}`,
+                    metadata: { rideId, requestId: request.id }
+                }
+            });
+        }
+
         return NextResponse.json(request);
 
     } catch (error) {

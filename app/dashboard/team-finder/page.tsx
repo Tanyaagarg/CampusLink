@@ -43,6 +43,9 @@ function TeamFinderContent() {
             }
         };
         fetchPosts();
+
+        const interval = setInterval(fetchPosts, 5000); // Auto-refresh every 5s
+        return () => clearInterval(interval);
     }, [activeCategory, searchQuery]);
 
     const refreshPosts = async () => {

@@ -82,6 +82,11 @@ function ProfileContent() {
                 phone: user.phone || ""
             });
         }
+        // Force view for non-owners
+        if (user && !user.isOwner) {
+            setActivityType('offered');
+            setActivityTab('active');
+        }
     }, [user, isEditing]);
 
     const handleUpdateProfile = async () => {
@@ -266,38 +271,42 @@ function ProfileContent() {
                                             <UserIcon className="w-5 h-5 text-purple-500" /> Activity
                                         </h2>
 
-                                        {/* Main Toggle: Requested vs Offered */}
-                                        <div className="flex bg-[#111] p-1 rounded-lg border border-[#333]">
-                                            <button
-                                                onClick={() => setActivityType('requested')}
-                                                className={`px-4 py-1.5 text-sm font-medium rounded-md transition-colors ${activityType === 'requested' ? 'bg-[#222] text-white shadow-sm' : 'text-gray-500 hover:text-gray-300'}`}
-                                            >
-                                                Requested
-                                            </button>
-                                            <button
-                                                onClick={() => setActivityType('offered')}
-                                                className={`px-4 py-1.5 text-sm font-medium rounded-md transition-colors ${activityType === 'offered' ? 'bg-[#222] text-white shadow-sm' : 'text-gray-500 hover:text-gray-300'}`}
-                                            >
-                                                Offered
-                                            </button>
-                                        </div>
+                                        {/* Main Toggle: Requested vs Offered - Only for Owner */}
+                                        {user.isOwner && (
+                                            <div className="flex bg-[#111] p-1 rounded-lg border border-[#333]">
+                                                <button
+                                                    onClick={() => setActivityType('requested')}
+                                                    className={`px-4 py-1.5 text-sm font-medium rounded-md transition-colors ${activityType === 'requested' ? 'bg-[#222] text-white shadow-sm' : 'text-gray-500 hover:text-gray-300'}`}
+                                                >
+                                                    Requested
+                                                </button>
+                                                <button
+                                                    onClick={() => setActivityType('offered')}
+                                                    className={`px-4 py-1.5 text-sm font-medium rounded-md transition-colors ${activityType === 'offered' ? 'bg-[#222] text-white shadow-sm' : 'text-gray-500 hover:text-gray-300'}`}
+                                                >
+                                                    Offered
+                                                </button>
+                                            </div>
+                                        )}
                                     </div>
 
-                                    {/* Sub Toggle: Active vs History */}
-                                    <div className="flex justify-start border-b border-[#222]">
-                                        <button
-                                            onClick={() => setActivityTab('active')}
-                                            className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${activityTab === 'active' ? 'border-neon-blue text-neon-blue' : 'border-transparent text-gray-500 hover:text-gray-300'}`}
-                                        >
-                                            Active
-                                        </button>
-                                        <button
-                                            onClick={() => setActivityTab('history')}
-                                            className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${activityTab === 'history' ? 'border-neon-blue text-neon-blue' : 'border-transparent text-gray-500 hover:text-gray-300'}`}
-                                        >
-                                            History
-                                        </button>
-                                    </div>
+                                    {/* Sub Toggle: Active vs History - Only for Owner */}
+                                    {user.isOwner && (
+                                        <div className="flex justify-start border-b border-[#222]">
+                                            <button
+                                                onClick={() => setActivityTab('active')}
+                                                className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${activityTab === 'active' ? 'border-neon-blue text-neon-blue' : 'border-transparent text-gray-500 hover:text-gray-300'}`}
+                                            >
+                                                Active
+                                            </button>
+                                            <button
+                                                onClick={() => setActivityTab('history')}
+                                                className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${activityTab === 'history' ? 'border-neon-blue text-neon-blue' : 'border-transparent text-gray-500 hover:text-gray-300'}`}
+                                            >
+                                                History
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
 
                                 <div className="space-y-6">

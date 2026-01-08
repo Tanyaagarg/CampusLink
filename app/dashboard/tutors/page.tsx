@@ -35,6 +35,8 @@ function TutorsContent() {
 
     useEffect(() => {
         fetchTutors();
+        const interval = setInterval(fetchTutors, 5000);
+        return () => clearInterval(interval);
     }, [searchQuery]);
 
     const handleRequest = async (tutorProfileId: string, hasRequested: boolean) => {

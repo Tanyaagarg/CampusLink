@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import Modal from "@/components/ui/Modal";
-import { Tag, DollarSign, Image as ImageIcon } from "lucide-react";
+import { Tag, DollarSign, Image as ImageIcon, X } from "lucide-react";
+import { UploadButton } from "@/lib/uploadthing";
 
 interface Props {
     isOpen: boolean;
@@ -12,20 +13,7 @@ interface Props {
 
 export default function CreateListingModal({ isOpen, onClose, onSuccess }: Props) {
     const [loading, setLoading] = useState(false);
-    const [selectedImage, setSelectedImage] = useState<string | null>(null);
-
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            const file = e.target.files[0];
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                if (event.target?.result) {
-                    setSelectedImage(event.target.result as string);
-                }
-            };
-            reader.readAsDataURL(file);
-        }
-    };
+    const [imageUrl, setImageUrl] = useState<string | null>(null);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -39,8 +27,7 @@ export default function CreateListingModal({ isOpen, onClose, onSuccess }: Props
             category: formData.get("category"),
             price: formData.get("price"),
             condition: formData.get("condition") || "Used",
-            // For now we skip actual image upload until UploadThing is configured
-            images: []
+            images: imageUrl ? [imageUrl] : []
         };
 
         try {
@@ -53,7 +40,7 @@ export default function CreateListingModal({ isOpen, onClose, onSuccess }: Props
             if (res.ok) {
                 onClose();
                 form.reset();
-                setSelectedImage(null);
+                setImageUrl(null);
                 if (onSuccess) onSuccess();
             } else {
                 alert("Failed to post item");
@@ -124,26 +111,36 @@ export default function CreateListingModal({ isOpen, onClose, onSuccess }: Props
                 </div>
 
                 <div>
-                    <label className="block text-sm font-medium text-gray-400 mb-1">Upload Image</label>
-                    <div className="border-2 border-dashed border-[#333] rounded-xl p-4 flex flex-col items-center justify-center text-gray-500 hover:border-cyan-400/50 hover:bg-[#181818] transition-all cursor-pointer relative overflow-hidden group">
-                        <input
-                            type="file"
-                            accept="image/*"
-                            onChange={handleImageChange}
-                            className="absolute inset-0 opacity-0 cursor-pointer z-10"
-                        />
-
-                        {selectedImage ? (
-                            <div className="relative w-full h-48 rounded-lg overflow-hidden">
-                                <img src={selectedImage} alt="Preview" className="w-full h-full object-cover" />
-                                <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <p className="text-white text-sm font-bold">Change Image</p>
-                                </div>
+                    <label className="block text-sm font-medium text-gray-400 mb-2">Item Image</label>
+                    <div className="border border-[#333] rounded-xl p-4 bg-[#181818]">
+                        {imageUrl ? (
+                            <div className="relative w-full h-48 rounded-lg overflow-hidden group">
+                                <img src={imageUrl} alt="Preview" className="w-full h-full object-cover" />
+                                <button
+                                    type="button"
+                                    onClick={() => setImageUrl(null)}
+                                    className="absolute top-2 right-2 p-1.5 bg-black/50 text-white rounded-full hover:bg-red-500 transition-colors"
+                                >
+                                    <X className="w-4 h-4" />
+                                </button>
                             </div>
                         ) : (
-                            <div className="py-4 flex flex-col items-center">
-                                <ImageIcon className="w-8 h-8 mb-2" />
-                                <span className="text-xs">Click to upload photo</span>
+                            <div className="flex flex-col items-center justify-center py-4">
+                                <UploadButton
+                                    endpoint="imageUploader"
+                                    onClientUploadComplete={(res) => {
+                                        if (res && res[0]) {
+                                            setImageUrl(res[0].url);
+                                        }
+                                    }}
+                                    onUploadError={(error: Error) => {
+                                        alert(`ERROR! ${error.message}`);
+                                    }}
+                                    appearance={{
+                                        button: "bg-cyan-500 hover:bg-cyan-600 text-white w-full",
+                                        allowedContent: "text-gray-400 text-xs"
+                                    }}
+                                />
                             </div>
                         )}
                     </div>

@@ -188,6 +188,21 @@ function ChatContent() {
         if ((!messageInput.trim() && !payload) || !activeChat) return;
 
         const body = payload || { text: messageInput, type: "text" };
+        const tempId = "temp-" + Date.now();
+        const tempMessage = {
+            id: tempId,
+            text: body.text || "",
+            type: body.type || "text",
+            attachment: body.attachment,
+            sender: "me",
+            senderId: currentUser?.id,
+            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            status: "sending"
+        };
+
+        // Optimistic update
+        setMessageInput("");
+        setMessages(prev => [...prev, tempMessage]);
 
         try {
             const res = await fetch(`/api/chat/${activeChat.id}`, {
@@ -196,12 +211,18 @@ function ChatContent() {
             });
 
             if (res.ok) {
-                setMessageInput("");
+                // Fetch latest to get real ID and status
                 fetchMessages(activeChat.id);
                 fetchConversations();
+            } else {
+                // If failed, remove the temp message
+                setMessages(prev => prev.filter(m => m.id !== tempId));
+                console.error("Failed to send message: Server error");
             }
         } catch (error) {
             console.error("Failed to send message", error);
+            // If failed, remove the temp message
+            setMessages(prev => prev.filter(m => m.id !== tempId));
         }
     };
 

@@ -47,6 +47,12 @@ function MarketplaceContent() {
         return () => clearTimeout(timer);
     }, [activeCategory, searchQuery]);
 
+    // Auto-refresh using a separate effect to avoid conflict with debounce
+    useEffect(() => {
+        const interval = setInterval(fetchProducts, 5000);
+        return () => clearInterval(interval);
+    }, [activeCategory, searchQuery]);
+
     // Refresh trigger
     const handleRefresh = () => {
         fetchProducts();

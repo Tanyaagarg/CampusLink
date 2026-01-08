@@ -22,6 +22,7 @@ export function UserAvatar({ src, name, className }: UserAvatarProps) {
                     src={src}
                     alt={name || "User"}
                     className="w-full h-full object-cover"
+                    style={{ border: "none", background: "transparent" }}
                 />
             ) : (
                 <div className="w-full h-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-sm">

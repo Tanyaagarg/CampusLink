@@ -37,6 +37,8 @@ function VenturesContent() {
 
     useEffect(() => {
         fetchVentures();
+        const interval = setInterval(fetchVentures, 5000);
+        return () => clearInterval(interval);
     }, [searchQuery]);
 
     const confirmDelete = async () => {
