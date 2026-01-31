@@ -26,6 +26,9 @@ export async function GET(req: Request) {
             where: {
                 users: {
                     some: { id: userId }
+                },
+                NOT: {
+                    deletedBy: { has: userId }
                 }
             },
             include: {
@@ -117,6 +120,17 @@ export async function POST(req: Request) {
         });
 
         if (existing) {
+            // Restore chat if it was deleted by this user
+            if (existing.deletedBy.includes(userId)) {
+                await db.conversation.update({
+                    where: { id: existing.id },
+                    data: {
+                        deletedBy: {
+                            set: existing.deletedBy.filter((id: string) => id !== userId)
+                        }
+                    }
+                });
+            }
             return NextResponse.json(formatConversation(existing));
         }
 

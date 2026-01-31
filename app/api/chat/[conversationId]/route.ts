@@ -120,9 +120,24 @@ export async function DELETE(req: Request, props: { params: Promise<{ conversati
             return new NextResponse("Forbidden", { status: 403 });
         }
 
-        await db.conversation.delete({
-            where: { id: params.conversationId }
-        });
+        // Logic for Independent Deletion
+        const deletedBy = new Set(conversation.deletedBy || []);
+        deletedBy.add(userId);
+
+        // If all participants have deleted the chat, hard delete it
+        if (deletedBy.size >= conversation.users.length) {
+            await db.conversation.delete({
+                where: { id: params.conversationId }
+            });
+        } else {
+            // Otherwise, soft delete (add userId to deletedBy)
+            await db.conversation.update({
+                where: { id: params.conversationId },
+                data: {
+                    deletedBy: Array.from(deletedBy)
+                }
+            });
+        }
 
         return NextResponse.json({ success: true });
 
