@@ -266,7 +266,7 @@ function ChatContent() {
 
     // Unsend Message Logic
     const [messageToDelete, setMessageToDelete] = useState<string | null>(null);
-    const [chatToDelete, setChatToDelete] = useState<string | null>(null);
+
 
     const handleDeleteMessage = async (messageId: string) => {
         // Optimistic Update
@@ -292,37 +292,7 @@ function ChatContent() {
         }
     };
 
-    const handleDeleteChat = async (chatId: string) => {
-        // Optimistic Update
-        const previousConversations = [...conversations];
-        const wasActive = activeChat?.id === chatId;
 
-        setConversations(prev => prev.filter(c => c.id !== chatId));
-        if (wasActive) {
-            setActiveChat(null);
-            setMessages([]);
-        }
-        setChatToDelete(null); // Close modal immediately
-
-        try {
-            const res = await fetch(`/api/chat/${chatId}`, { method: "DELETE" });
-            if (!res.ok) {
-                // Rollback
-                setConversations(previousConversations);
-                if (wasActive) {
-                    // Start fetching again or restore active chat logic if needed, 
-                    // but usually just re-fetching conversations is enough context to restore
-                    // simpler to just alert user it failed
-                }
-                const errorText = await res.text();
-                alert(`Error: ${errorText} `);
-            }
-        } catch (error) {
-            console.error("Failed to delete chat", error);
-            setConversations(previousConversations);
-            alert("Failed to delete chat.");
-        }
-    };
 
     // Filter conversations list (and deduplicate by user)
     const filteredConversations = conversations
@@ -421,16 +391,7 @@ function ChatContent() {
                             </div>
 
                             {/* Delete Chat Button */}
-                            <button
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    setChatToDelete(chat.id);
-                                }}
-                                className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 p-2 text-gray-400 hover:text-red-500 hover:bg-red-500/10 rounded-full transition-all"
-                                title="Delete Conversation"
-                            >
-                                <Trash2 className="w-5 h-5" />
-                            </button>
+
                         </div>
                     ))}
                 </div>
@@ -658,31 +619,8 @@ function ChatContent() {
                     </div>
                 )
             }
-            {/* Delete Chat Confirmation Modal */}
-            {
-                chatToDelete && (
-                    <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
-                        <div className="bg-[#181818] border border-[#222] rounded-xl p-6 max-w-sm w-full shadow-xl">
-                            <h3 className="text-lg font-bold text-white mb-2">Delete Conversation?</h3>
-                            <p className="text-gray-400 text-sm mb-6">This will delete all messages in this chat. This action cannot be undone.</p>
-                            <div className="flex justify-end gap-3">
-                                <button
-                                    onClick={() => setChatToDelete(null)}
-                                    className="px-4 py-2 rounded-lg text-gray-300 hover:bg-[#222] transition-colors"
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    onClick={() => handleDeleteChat(chatToDelete)}
-                                    className="px-4 py-2 rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500/20 transition-colors"
-                                >
-                                    Delete
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                )
-            }
+
+
         </div >
     );
 }
