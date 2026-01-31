@@ -34,7 +34,7 @@ export async function GET(req: Request) {
             include: {
                 users: {
                     where: { id: { not: userId } },
-                    select: { id: true, name: true, image: true, email: true, lastSeen: true }
+                    select: { id: true, name: true, image: true, lastSeen: true }
                 },
                 messages: {
                     orderBy: { createdAt: 'desc' },
@@ -110,7 +110,7 @@ export async function POST(req: Request) {
             },
             include: {
                 users: {
-                    select: { id: true, name: true, image: true, email: true, lastSeen: true }
+                    select: { id: true, name: true, image: true, lastSeen: true }
                 },
                 messages: {
                     orderBy: { createdAt: 'desc' },
@@ -145,7 +145,7 @@ export async function POST(req: Request) {
             },
             include: {
                 users: {
-                    select: { id: true, name: true, image: true, email: true, lastSeen: true }
+                    select: { id: true, name: true, image: true, lastSeen: true }
                 }
             }
         });

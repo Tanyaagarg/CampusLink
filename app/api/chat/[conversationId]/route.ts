@@ -80,10 +80,13 @@ export async function POST(req: Request, props: { params: Promise<{ conversation
             }
         });
 
-        // Update conversation timestamp
+        // Update conversation timestamp and restore if deleted
         await db.conversation.update({
             where: { id: params.conversationId },
-            data: { updatedAt: new Date() }
+            data: {
+                updatedAt: new Date(),
+                deletedBy: { set: [] } // Restore chat for everyone 
+            }
         });
 
         return NextResponse.json(message);
