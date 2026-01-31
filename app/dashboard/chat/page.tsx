@@ -69,7 +69,7 @@ function ChatContent() {
     // Fetch conversations - Modified to return data
     const fetchConversations = async () => {
         try {
-            const res = await fetch("/api/chat");
+            const res = await fetch("/api/chat", { cache: 'no-store' });
             if (res.ok) {
                 const data = await res.json();
 
@@ -107,7 +107,8 @@ function ChatContent() {
                 const res = await fetch("/api/chat", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ targetUserId })
+                    body: JSON.stringify({ targetUserId }),
+                    cache: 'no-store'
                 });
 
                 if (res.ok) {
@@ -131,10 +132,10 @@ function ChatContent() {
         }
     }, [targetUserId, activeChat]); // Depend on activeChat to check current state
 
-    // Initial Load & Polling (Interval reduced to 1s for responsiveness)
+    // Initial Load & Polling (Interval increased to 3s for better performance)
     useEffect(() => {
         fetchConversations();
-        const interval = setInterval(fetchConversations, 1000);
+        const interval = setInterval(fetchConversations, 3000);
         return () => clearInterval(interval);
     }, []);
 
