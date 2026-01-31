@@ -152,6 +152,7 @@ function ChatContent() {
                     sender: activeChat?.otherUser?.id && m.senderId !== activeChat.otherUser.id ? "me" : "them",
                     senderId: m.sender.id,
                     time: new Date(m.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                    createdAt: m.createdAt,
                     status: m.read ? "read" : "sent"
                 }));
 
@@ -197,6 +198,7 @@ function ChatContent() {
             sender: "me",
             senderId: currentUser?.id,
             time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            createdAt: new Date().toISOString(),
             status: "sending"
         };
 
@@ -504,45 +506,68 @@ function ChatContent() {
 
                             {/* Messages Area */}
                             <div className="flex-1 overflow-y-auto p-4 space-y-4 z-10 custom-scrollbar">
-                                {
-                                    filteredMessages.map((msg) => (
-                                        <div key={msg.id} className={`flex group ${msg.sender === 'me' ? 'justify-end' : 'justify-start'} `}>
+                                {filteredMessages.map((msg, index) => {
+                                    const prevMsg = filteredMessages[index - 1];
+                                    const showDateSeparator = !prevMsg || new Date(msg.createdAt).toDateString() !== new Date(prevMsg.createdAt).toDateString();
+                                    const dateLabel = new Date(msg.createdAt).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' });
 
-                                            {/* Delete Button (Only for 'me') */}
-                                            {msg.sender === 'me' && (
-                                                <button
-                                                    onClick={() => setMessageToDelete(msg.id)}
-                                                    className="opacity-0 group-hover:opacity-100 transition-opacity mr-2 text-gray-500 hover:text-red-500"
-                                                    title="Unsend Message"
-                                                >
-                                                    <Trash2 className="w-4 h-4" />
-                                                </button>
+                                    // Calculate better label (Today, Yesterday)
+                                    let displayDate = dateLabel;
+                                    const msgDate = new Date(msg.createdAt);
+                                    const today = new Date();
+                                    const yesterday = new Date();
+                                    yesterday.setDate(yesterday.getDate() - 1);
+
+                                    if (msgDate.toDateString() === today.toDateString()) displayDate = "Today";
+                                    else if (msgDate.toDateString() === yesterday.toDateString()) displayDate = "Yesterday";
+
+                                    return (
+                                        <div key={msg.id} className="flex flex-col">
+                                            {showDateSeparator && (
+                                                <div className="flex justify-center my-4 sticky top-0 z-20">
+                                                    <span className="bg-[#1a1a1a]/80 backdrop-blur-sm px-3 py-1 rounded-full text-[10px] text-gray-400 font-medium border border-[#333]">
+                                                        {displayDate}
+                                                    </span>
+                                                </div>
                                             )}
 
-                                            <div className={`max-w-[70%] rounded-xl px-4 py-2 relative shadow-md ${msg.sender === 'me'
-                                                ? 'bg-cyan-500/20 text-white rounded-tr-none border border-cyan-500/30'
-                                                : 'bg-[#181818] text-white rounded-tl-none border border-[#333]'
-                                                } `}>
+                                            <div className={`flex group ${msg.sender === 'me' ? 'justify-end' : 'justify-start'} `}>
+                                                {/* Delete Button (Only for 'me') */}
+                                                {msg.sender === 'me' && (
+                                                    <button
+                                                        onClick={() => setMessageToDelete(msg.id)}
+                                                        className="opacity-0 group-hover:opacity-100 transition-opacity mr-2 text-gray-500 hover:text-red-500"
+                                                        title="Unsend Message"
+                                                    >
+                                                        <Trash2 className="w-4 h-4" />
+                                                    </button>
+                                                )}
 
-                                                {/* Attachments */}
-                                                {msg.type === "image" && msg.attachment ? (
-                                                    <img src={msg.attachment} alt="Attachment" className="rounded-lg mb-2 max-h-60 object-cover" />
-                                                ) : msg.type === "audio" && msg.attachment ? (
-                                                    <audio controls src={msg.attachment} className="mb-2 max-w-full" />
-                                                ) : null}
+                                                <div className={`max-w-[70%] rounded-xl px-4 py-2 relative shadow-md ${msg.sender === 'me'
+                                                    ? 'bg-cyan-500/20 text-white rounded-tr-none border border-cyan-500/30'
+                                                    : 'bg-[#181818] text-white rounded-tl-none border border-[#333]'
+                                                    } `}>
 
-                                                <p className="text-sm leading-snug">{msg.text}</p>
+                                                    {/* Attachments */}
+                                                    {msg.type === "image" && msg.attachment ? (
+                                                        <img src={msg.attachment} alt="Attachment" className="rounded-lg mb-2 max-h-60 object-cover" />
+                                                    ) : msg.type === "audio" && msg.attachment ? (
+                                                        <audio controls src={msg.attachment} className="mb-2 max-w-full" />
+                                                    ) : null}
 
-                                                <div className="flex justify-end items-center gap-1 mt-1">
-                                                    <span className="text-[10px] text-gray-400/80">{msg.time}</span>
-                                                    {(msg.sender === 'me') && (
-                                                        msg.status === 'read' ? <CheckCheck className="w-3 h-3 text-neon-blue" /> : <Check className="w-3 h-3 text-gray-400" />
-                                                    )}
+                                                    <p className="text-sm leading-snug">{msg.text}</p>
+
+                                                    <div className="flex justify-end items-center gap-1 mt-1">
+                                                        <span className="text-[10px] text-gray-400/80">{msg.time}</span>
+                                                        {(msg.sender === 'me') && (
+                                                            msg.status === 'read' ? <CheckCheck className="w-3 h-3 text-neon-blue" /> : <Check className="w-3 h-3 text-gray-400" />
+                                                        )}
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    ))
-                                }
+                                    );
+                                })}
                                 <div ref={messagesEndRef} />
                             </div>
 
