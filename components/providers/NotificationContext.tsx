@@ -16,6 +16,7 @@ export interface Notification {
     bg: string;
     avatar: string | null;
     createdAt?: string;
+    metadata?: any;
 }
 
 interface NotificationContextType {
@@ -84,7 +85,8 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
                         icon: style.icon,
                         color: style.color,
                         bg: style.bg,
-                        avatar: null // Avatar logic might need user fetch, for now basic
+                        avatar: null, // Avatar logic might need user fetch, for now basic
+                        metadata: n.metadata
                     } as Notification;
                 });
                 setNotifications(formatted);

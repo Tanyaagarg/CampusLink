@@ -64,7 +64,7 @@ export async function POST(req: Request) {
                     type: "TUTOR_REQUEST",
                     title: "New Tutor Request",
                     message: `${requesterName} requested a tutor session for ${tutorProfile.subjects.join(", ")}`,
-                    metadata: { tutorProfileId, requestId: request.id }
+                    metadata: { tutorProfileId, requestId: request.id, senderId: userId }
                 }
             });
         }

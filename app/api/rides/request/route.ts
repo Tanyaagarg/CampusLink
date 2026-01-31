@@ -64,7 +64,7 @@ export async function POST(req: Request) {
                     type: "RIDE_REQUEST",
                     title: "New Ride Request",
                     message: `${requesterName} requested to join your ride from ${ride.from} to ${ride.to}`,
-                    metadata: { rideId, requestId: request.id }
+                    metadata: { rideId, requestId: request.id, senderId: userId }
                 }
             });
         }

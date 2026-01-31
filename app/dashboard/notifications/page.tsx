@@ -109,6 +109,18 @@ export default function NotificationsPage() {
                                                 <p className={`text-sm mt-1 line-clamp-2 transition-colors ${notif.read ? 'text-gray-600' : 'text-gray-400'}`}>
                                                     {notif.message}
                                                 </p>
+                                                {/* Chat Button */}
+                                                {notif.metadata?.senderId && (
+                                                    <div className="mt-3">
+                                                        <a
+                                                            href={`/dashboard/chat?userId=${notif.metadata.senderId}`}
+                                                            onClick={(e) => e.stopPropagation()}
+                                                            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#222] hover:bg-[#333] border border-[#333] hover:border-[#444] text-xs font-semibold text-white transition-all group/btn"
+                                                        >
+                                                            <span>Message</span>
+                                                        </a>
+                                                    </div>
+                                                )}
                                             </div>
 
                                             {/* Delete Action (Visible on Hover) */}

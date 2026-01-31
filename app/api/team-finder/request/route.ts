@@ -52,7 +52,7 @@ export async function POST(req: Request) {
                     type: "TEAM_REQUEST",
                     title: "New Team Request",
                     message: `${requesterName} requested to join your team for "${post.title}"`,
-                    metadata: { postId, requestId: request.id }
+                    metadata: { postId, requestId: request.id, senderId: userId }
                 }
             });
         }
