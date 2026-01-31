@@ -34,18 +34,7 @@ export default function RegisterVentureModal({ isOpen, onClose, onSuccess, ventu
     // Logo State
     const [logo, setLogo] = useState(ventureToEdit?.logo || "");
 
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            const file = e.target.files[0];
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                if (event.target?.result) {
-                    setLogo(event.target.result as string);
-                }
-            };
-            reader.readAsDataURL(file);
-        }
-    };
+
 
     // Reset form when opening/closing or changing ventureToEdit
     // We use a key or useEffect in parent usually, but re-initializing state on open is good
@@ -260,20 +249,42 @@ export default function RegisterVentureModal({ isOpen, onClose, onSuccess, ventu
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-400 mb-1">Title Photo (Optional)</label>
-                        <div className="border border-[#333] border-dashed rounded-xl p-3 flex items-center justify-center gap-4 bg-[#111] hover:bg-[#181818] transition-colors relative overflow-hidden">
-                            <input
-                                type="file"
-                                accept="image/*"
-                                onChange={handleImageChange}
-                                className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
-                            />
+                        <label className="block text-sm font-medium text-gray-400 mb-2">Title Photo (Optional)</label>
+                        <div className="border border-[#333] rounded-xl p-4 bg-[#111]">
                             {logo ? (
-                                <img src={logo} alt="Preview" className="h-20 w-full object-cover rounded-lg opacity-80" />
+                                <div className="relative w-full h-32 rounded-lg overflow-hidden group">
+                                    <img src={logo} alt="Preview" className="w-full h-full object-cover" />
+                                    <button
+                                        type="button"
+                                        onClick={() => setLogo("")}
+                                        className="absolute top-2 right-2 p-1.5 bg-black/50 text-white rounded-full hover:bg-red-500 transition-colors"
+                                    >
+                                        <Trash2 className="w-4 h-4" />
+                                    </button>
+                                </div>
                             ) : (
-                                <div className="text-gray-500 flex flex-col items-center">
-                                    <Plus className="w-5 h-5 mb-1" />
-                                    <span className="text-xs">Upload Banner</span>
+                                <div className="flex flex-col items-center justify-center py-2">
+                                    <UploadButton
+                                        endpoint="imageUploader"
+                                        onClientUploadComplete={(res) => {
+                                            if (res && res[0]) {
+                                                setLogo(res[0].url);
+                                            }
+                                        }}
+                                        onUploadError={(error: Error) => {
+                                            alert(`ERROR! ${error.message}`);
+                                        }}
+                                        appearance={{
+                                            button: "bg-[#222] border border-[#333] text-gray-400 text-sm hover:bg-[#333] hover:text-white transition-all w-full",
+                                            allowedContent: "text-gray-500 text-xs"
+                                        }}
+                                        content={{
+                                            button({ ready }) {
+                                                if (ready) return <div className="flex items-center gap-2"><Plus className="w-4 h-4" /> Upload Banner</div>;
+                                                return "Loading...";
+                                            }
+                                        }}
+                                    />
                                 </div>
                             )}
                         </div>
@@ -310,34 +321,48 @@ export default function RegisterVentureModal({ isOpen, onClose, onSuccess, ventu
                                 {group.items.map((item: any, iIndex: number) => (
                                     <div key={iIndex} className="flex gap-2 items-start bg-[#181818] p-2 rounded-lg border border-[#333]">
                                         {/* Image Upload for Item */}
-                                        <div className="relative w-10 h-10 flex-shrink-0 bg-[#222] rounded overflow-hidden group">
+                                        <div className="relative w-12 h-12 flex-shrink-0 bg-[#222] rounded overflow-hidden border border-[#333]">
                                             {item.image ? (
-                                                <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                                                <div className="relative w-full h-full group">
+                                                    <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                                                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity cursor-pointer">
+                                                        <button
+                                                            onClick={() => updateItem(gIndex, iIndex, "image", "")}
+                                                            className="text-white hover:text-red-400"
+                                                        >
+                                                            <Trash2 className="w-4 h-4" />
+                                                        </button>
+                                                    </div>
+                                                </div>
                                             ) : (
-                                                <div className="w-full h-full flex items-center justify-center text-[8px] text-gray-500 text-center leading-none">
-                                                    No Img
+                                                <div className="w-full h-full flex items-center justify-center">
+                                                    <UploadButton
+                                                        endpoint="imageUploader"
+                                                        onClientUploadComplete={(res) => {
+                                                            if (res && res[0]) {
+                                                                updateItem(gIndex, iIndex, "image", res[0].url);
+                                                            }
+                                                        }}
+                                                        onUploadError={(error: Error) => {
+                                                            alert(`ERROR! ${error.message}`);
+                                                        }}
+                                                        appearance={{
+                                                            button: "w-full h-full opacity-0 absolute inset-0 cursor-pointer", // Expand clickable area
+                                                            allowedContent: "hidden"
+                                                        }}
+                                                        content={{
+                                                            button({ ready }) {
+                                                                if (ready) return <div className="flex items-center justify-center w-full h-full text-gray-500 hover:text-white transition-colors"><Plus className="w-4 h-4" /></div>;
+                                                                return <div className="animate-spin w-3 h-3 border-2 border-gray-500 border-t-transparent rounded-full" />;
+                                                            }
+                                                        }}
+                                                    />
+                                                    {/* Visual Fallback if upload button styles fail to render content correctly */}
+                                                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                                        <Plus className="w-4 h-4 text-gray-600" />
+                                                    </div>
                                                 </div>
                                             )}
-
-                                            {/* Hover Overlay for Upload */}
-                                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity cursor-pointer">
-                                                <UploadButton
-                                                    endpoint="imageUploader"
-                                                    onClientUploadComplete={(res) => {
-                                                        if (res && res[0]) {
-                                                            updateItem(gIndex, iIndex, "image", res[0].url);
-                                                        }
-                                                    }}
-                                                    onUploadError={(error: Error) => {
-                                                        alert(`ERROR! ${error.message}`);
-                                                    }}
-                                                    appearance={{
-                                                        button: "w-full h-full opacity-0 absolute inset-0 cursor-pointer", // Invisible clickable area
-                                                        allowedContent: "hidden"
-                                                    }}
-                                                />
-                                                <Plus className="w-4 h-4 text-white pointer-events-none" />
-                                            </div>
                                         </div>
 
                                         <div className="flex-1 flex gap-2">
