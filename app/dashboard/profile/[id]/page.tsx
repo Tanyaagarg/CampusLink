@@ -185,24 +185,7 @@ export default function PublicProfilePage() {
                             )}
                         </div>
 
-                        {/* Stats Section */}
-                        <section className="pt-6 border-t border-[#222]">
-                            <h2 className="text-lg font-bold text-white mb-4">Community Contributions</h2>
-                            <div className="grid grid-cols-3 gap-4">
-                                <div className="p-4 rounded-xl bg-[#111] border border-[#333] text-center">
-                                    <div className="text-2xl font-bold text-white">{user._count.teamPosts}</div>
-                                    <div className="text-xs text-gray-500 uppercase mt-1">Team Posts</div>
-                                </div>
-                                <div className="p-4 rounded-xl bg-[#111] border border-[#333] text-center">
-                                    <div className="text-2xl font-bold text-white">{user._count.hostedRides}</div>
-                                    <div className="text-xs text-gray-500 uppercase mt-1">Rides Hosted</div>
-                                </div>
-                                <div className="p-4 rounded-xl bg-[#111] border border-[#333] text-center">
-                                    <div className="text-2xl font-bold text-white">{user._count.listings}</div>
-                                    <div className="text-xs text-gray-500 uppercase mt-1">Listings</div>
-                                </div>
-                            </div>
-                        </section>
+
                     </div>
                 </div>
             </div>
