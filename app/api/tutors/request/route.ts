@@ -52,12 +52,18 @@ export async function POST(req: Request) {
         });
 
         if (tutorProfile && tutorProfile.userId !== userId) {
+            const requester = await db.user.findUnique({
+                where: { id: userId },
+                select: { name: true }
+            });
+            const requesterName = requester?.name || "Someone";
+
             await db.notification.create({
                 data: {
                     userId: tutorProfile.userId,
                     type: "TUTOR_REQUEST",
                     title: "New Tutor Request",
-                    message: `Someone requested a tutor session for ${tutorProfile.subjects.join(", ")}`,
+                    message: `${requesterName} requested a tutor session for ${tutorProfile.subjects.join(", ")}`,
                     metadata: { tutorProfileId, requestId: request.id }
                 }
             });

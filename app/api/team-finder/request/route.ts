@@ -40,12 +40,18 @@ export async function POST(req: Request) {
         });
 
         if (post && post.authorId !== userId) {
+            const requester = await db.user.findUnique({
+                where: { id: userId },
+                select: { name: true }
+            });
+            const requesterName = requester?.name || "Someone";
+
             await db.notification.create({
                 data: {
                     userId: post.authorId,
                     type: "TEAM_REQUEST",
                     title: "New Team Request",
-                    message: `Someone requested to join your team for "${post.title}"`,
+                    message: `${requesterName} requested to join your team for "${post.title}"`,
                     metadata: { postId, requestId: request.id }
                 }
             });

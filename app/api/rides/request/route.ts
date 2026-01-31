@@ -52,12 +52,18 @@ export async function POST(req: Request) {
         });
 
         if (ride && ride.hostId !== userId) {
+            const requester = await db.user.findUnique({
+                where: { id: userId },
+                select: { name: true }
+            });
+            const requesterName = requester?.name || "Someone";
+
             await db.notification.create({
                 data: {
                     userId: ride.hostId,
                     type: "RIDE_REQUEST",
                     title: "New Ride Request",
-                    message: `Someone requested to join your ride from ${ride.from} to ${ride.to}`,
+                    message: `${requesterName} requested to join your ride from ${ride.from} to ${ride.to}`,
                     metadata: { rideId, requestId: request.id }
                 }
             });
