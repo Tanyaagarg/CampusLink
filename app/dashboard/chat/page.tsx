@@ -341,7 +341,7 @@ function ChatContent() {
                                 </span>
                             )}
                         </div>
-                        <span className="font-bold text-white">Chats</span>
+                        <span className="font-bold text-white">Conversations</span>
                     </div>
                 </div>
 
@@ -390,7 +390,7 @@ function ChatContent() {
                                 </div>
                             </div>
 
-                            {/* Delete Chat Button */}
+
 
                         </div>
                     ))}
