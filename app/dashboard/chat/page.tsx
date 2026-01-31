@@ -268,40 +268,58 @@ function ChatContent() {
     const [chatToDelete, setChatToDelete] = useState<string | null>(null);
 
     const handleDeleteMessage = async (messageId: string) => {
+        // Optimistic Update
+        const previousMessages = [...messages];
+        setMessages(prev => prev.filter(m => m.id !== messageId));
+        setMessageToDelete(null); // Close modal immediately
+
         try {
             const res = await fetch(`/api/chat/message/${messageId}`, {
                 method: "DELETE"
             });
-            if (res.ok) {
-                // Remove from local state immediately
-                setMessages(prev => prev.filter(m => m.id !== messageId));
-                setMessageToDelete(null);
-            } else {
+            if (!res.ok) {
+                // Rollback
+                setMessages(previousMessages);
                 const errorText = await res.text();
                 alert(`Error: ${errorText} `);
             }
         } catch (error) {
             console.error("Failed to delete message", error);
+            // Rollback
+            setMessages(previousMessages);
             alert("Failed to delete message. Network or Code error.");
         }
     };
 
     const handleDeleteChat = async (chatId: string) => {
+        // Optimistic Update
+        const previousConversations = [...conversations];
+        const wasActive = activeChat?.id === chatId;
+
+        setConversations(prev => prev.filter(c => c.id !== chatId));
+        if (wasActive) {
+            setActiveChat(null);
+            setMessages([]);
+        }
+        setChatToDelete(null); // Close modal immediately
+
         try {
             const res = await fetch(`/api/chat/${chatId}`, { method: "DELETE" });
-            if (res.ok) {
-                setConversations(prev => prev.filter(c => c.id !== chatId));
-                if (activeChat?.id === chatId) {
-                    setActiveChat(null);
-                    setMessages([]);
+            if (!res.ok) {
+                // Rollback
+                setConversations(previousConversations);
+                if (wasActive) {
+                    // Start fetching again or restore active chat logic if needed, 
+                    // but usually just re-fetching conversations is enough context to restore
+                    // simpler to just alert user it failed
                 }
-                setChatToDelete(null);
-            } else {
                 const errorText = await res.text();
                 alert(`Error: ${errorText} `);
             }
         } catch (error) {
             console.error("Failed to delete chat", error);
+            setConversations(previousConversations);
+            alert("Failed to delete chat.");
         }
     };
 
