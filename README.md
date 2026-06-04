@@ -1,8 +1,10 @@
 <div align="center">
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=12,20,24&height=220&section=header&text=CampusLink&fontSize=75&fontColor=ffffff&animation=fadeIn&fontAlignY=38&desc=The%20All-In-One%20Digital%20Campus%20Companion%20%F0%9F%8E%93&descAlignY=58&descAlign=50" width="100%"/>
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:2563EB,50:7C3AED,100:4F46E5&height=220&section=header&text=CampusLink&fontSize=75&fontColor=ffffff&animation=fadeIn&fontAlignY=38&desc=The%20All-In-One%20Digital%20Campus%20Companion%20%F0%9F%8E%93&descAlignY=58&descAlign=50" width="100%"/>
 
 <br/>
+
+[![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-campus--link--phi.vercel.app-6C63FF?style=for-the-badge)](https://campus-link-phi.vercel.app)
 
 [![Next.js](https://img.shields.io/badge/Next.js%2016-000000?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
@@ -171,7 +173,7 @@ This project is open source and available under the [MIT License](LICENSE).
 
 <div align="center">
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=12,20,24&height=120&section=footer" width="100%"/>
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:2563EB,50:7C3AED,100:4F46E5&height=120&section=footer" width="100%"/>
 
 <sub>Made with ❤️ for Thapar University students</sub>
 
