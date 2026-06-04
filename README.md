@@ -1,19 +1,27 @@
 <div align="center">
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=6C63FF&height=200&section=header&text=CampusLink&fontSize=70&fontColor=ffffff&animation=fadeIn&fontAlignY=38&desc=The%20All-In-One%20Digital%20Campus%20Companion&descAlignY=58&descAlign=50" width="100%"/>
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=12,20,24&height=220&section=header&text=CampusLink&fontSize=75&fontColor=ffffff&animation=fadeIn&fontAlignY=38&desc=The%20All-In-One%20Digital%20Campus%20Companion%20%F0%9F%8E%93&descAlignY=58&descAlign=50" width="100%"/>
 
 <br/>
 
-[![Live Demo](https://img.shields.io/badge/🚀%20Live%20Demo-campus--link--rosy.vercel.app-6C63FF?style=for-the-badge&logoColor=white)](https://campus-link-rosy.vercel.app)
-[![Next.js](https://img.shields.io/badge/Next.js%2016-black?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
+[![Next.js](https://img.shields.io/badge/Next.js%2016-000000?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Prisma](https://img.shields.io/badge/Prisma-2D3748?style=for-the-badge&logo=prisma&logoColor=white)](https://www.prisma.io/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-38BDF8?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
-[![Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://vercel.com/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-06B6D4?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://vercel.com/)
 
 <br/>
 
-> **CampusLink** is a full-stack platform built for Thapar University students — connecting peers through ride-sharing, tutoring, a campus marketplace, team discovery, and real-time messaging, all in one unified dashboard.
+<p align="center">
+  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=18&pause=1000&color=6C63FF&center=true&vCenter=true&width=600&lines=Ride+together+%F0%9F%9A%97;Learn+from+each+other+%F0%9F%93%9A;Build+teams+that+ship+%F0%9F%9A%80;Buy+%26+sell+on+campus+%F0%9F%9B%92;All+in+one+dashboard+%E2%9C%A8" alt="Typing SVG" />
+</p>
+
+<br/>
+
+<blockquote>
+<strong>CampusLink</strong> is a full-stack web platform built for Thapar University students — connecting peers through ride-sharing, tutoring, a campus marketplace, team discovery, and real-time messaging, all in one unified dashboard.
+</blockquote>
 
 <br/>
 
@@ -21,28 +29,39 @@
 
 ---
 
-## ✨ Features
+## 🌟 Features
 
-| Module | Description |
-|--------|-------------|
-| 🚗 **Ride Sharing** | Find peers traveling to the same destination — split costs, reduce footprint |
-| 📚 **Peer Tutoring** | Connect with senior students for academic help, or offer your expertise |
-| 🛒 **Campus Marketplace** | Buy & sell books, electronics, and dorm essentials within the campus community |
-| 🤝 **Team Finder** | Discover collaborators for hackathons, projects, and ventures based on skills |
-| 🚀 **Campus Ventures** | Showcase student startups and find early supporters or co-founders |
-| 💬 **Real-time Chat** | Integrated messaging for seamless coordination across all services |
+<table>
+  <tr>
+    <td align="center" width="200">🚗<br/><strong>Ride Sharing</strong><br/><sub>Find peers going your way — split costs & reduce carbon footprint</sub></td>
+    <td align="center" width="200">📚<br/><strong>Peer Tutoring</strong><br/><sub>Get academic help from seniors or offer your own expertise</sub></td>
+    <td align="center" width="200">🛒<br/><strong>Marketplace</strong><br/><sub>Buy & sell books, electronics, and dorm essentials on campus</sub></td>
+  </tr>
+  <tr>
+    <td align="center" width="200">🤝<br/><strong>Team Finder</strong><br/><sub>Discover collaborators for hackathons & projects by skill</sub></td>
+    <td align="center" width="200">🚀<br/><strong>Campus Ventures</strong><br/><sub>Showcase student startups and find co-founders or supporters</sub></td>
+    <td align="center" width="200">💬<br/><strong>Real-time Chat</strong><br/><sub>Integrated messaging to coordinate across every service</sub></td>
+  </tr>
+</table>
 
 ---
 
 ## 🛠️ Tech Stack
 
-```
-Frontend   →  Next.js 16 (App Router) · TypeScript · Tailwind CSS · Framer Motion
-Backend    →  Next.js Server Actions · NextAuth.js (Google OAuth)
-Database   →  PostgreSQL (NeonDB) · Prisma ORM
-Storage    →  UploadThing (image/file uploads)
-Deployment →  Vercel
-```
+<div align="center">
+
+| Layer | Technology |
+|-------|-----------|
+| **Framework** | Next.js 16 — App Router + Server Actions |
+| **Language** | TypeScript |
+| **Styling** | Tailwind CSS · Framer Motion |
+| **Auth** | NextAuth.js (Google OAuth) |
+| **Database** | PostgreSQL via NeonDB |
+| **ORM** | Prisma |
+| **File Storage** | UploadThing |
+| **Deployment** | Vercel |
+
+</div>
 
 ---
 
@@ -114,7 +133,7 @@ npx prisma db push
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to see the app.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
 
@@ -132,17 +151,9 @@ The schema (defined in `prisma/schema.prisma`) covers:
 
 ---
 
-## 🌐 Deployment
-
-The app is deployed on **Vercel** with **NeonDB** as the serverless PostgreSQL provider.
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/Tanyaagarg/CampusLink)
-
----
-
 ## 🤝 Contributing
 
-Contributions are welcome! Here's how to get started:
+Contributions are welcome! Here's how:
 
 1. Fork the repository
 2. Create your feature branch: `git checkout -b feature/amazing-feature`
@@ -160,12 +171,8 @@ This project is open source and available under the [MIT License](LICENSE).
 
 <div align="center">
 
-Made with ❤️ for Thapar University students
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=12,20,24&height=120&section=footer" width="100%"/>
 
-<br/>
-
-**[⬆ Back to top](#)**
-
-<img src="https://capsule-render.vercel.app/api?type=waving&color=6C63FF&height=100&section=footer" width="100%"/>
+<sub>Made with ❤️ for Thapar University students</sub>
 
 </div>
